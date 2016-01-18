@@ -55,19 +55,18 @@ def create_quiz(num_of_questions, questions)
       strand_count[question.strand_id] += 1
     end
   end
-  p strand_count
   current_strand_count = {}
   strand_count.each do |k,v|
     if current_strand_count[k] == nil
       current_strand_count[k] = 0
     end
   end
-  p strand_max = questions.length / strand_count.length
+  strand_max = num_of_questions / strand_count.length
   final_questions = []
   questions.each do |question|
-    if current_strand_count[question.strand_id] <= current_strand_count.max_by{|k,v| v}[1] && num_of_questions > 0 && current_strand_count[question.strand_id] <= strand_max
+    if current_strand_count[question.strand_id] < strand_max && num_of_questions > 0
       final_questions.push(question)
-      strand_count[question.strand_id] += 1
+      current_strand_count[question.strand_id] += 1
       num_of_questions -= 1
     end
   end
@@ -76,6 +75,6 @@ end
 
 quiz_questions = parse_question_csv
 
-p create_quiz(4, quiz_questions)
+p create_quiz(6, quiz_questions)
 
 # p questions
