@@ -15,9 +15,10 @@ end
 
 def get_quiz_length
   p "How many questions would you like in the quiz?"
-  num_of_questions = gets.chomp
+  num_of_questions = gets.chomp.to_i
   if num_of_questions > 0
-    p "Thank you, preparing quiz with #{num_of_questions}."
+    p "Thank you, preparing quiz with #{num_of_questions} questions."
+    num_of_questions
   else
     p "Number needs to be greater than 0"
   end
@@ -42,10 +43,6 @@ def parse_question_csv
   questions
 end
 
-def build_strand_hash
-
-end
-
 def create_quiz(num_of_questions, questions)
   strand_count = {}
   questions.each do |question|
@@ -64,17 +61,26 @@ def create_quiz(num_of_questions, questions)
   strand_max = num_of_questions / strand_count.length
   final_questions = []
   questions.each do |question|
-    if current_strand_count[question.strand_id] < strand_max && num_of_questions > 0
+    if current_strand_count[question.strand_id] <= strand_max && num_of_questions > 0
       final_questions.push(question)
       current_strand_count[question.strand_id] += 1
       num_of_questions -= 1
     end
   end
-  final_questions
+  final_questions.sort_by do |question|
+    question.difficulty
+  end
 end
 
-quiz_questions = parse_question_csv
+def output_quiz(questions)
+  p 'Quiz question IDs'
+  questions.each do |question|
+    p question.question_id
+  end
+end
 
-p create_quiz(6, quiz_questions)
+all_quiz_questions = parse_question_csv
+num_of_questions = get_quiz_length
+final_quiz_questions = create_quiz(num_of_questions, all_quiz_questions)
+output_quiz(final_quiz_questions)
 
-# p questions
